@@ -1,5 +1,7 @@
+// const open = require('open');
 const fs = require('fs');
 const fabric = require('fabric').fabric;
+
 
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -25,11 +27,16 @@ const canvas = new fabric.Canvas('canvas', {
 async function createCanvas() {
     await sleep(3000)
 
-    url = "https://cdn.discordapp.com/attachments/1222529795347185760/1228333564182003733/gd_superagi_98661_Generate_a_dynamic_and_energetic_logo_for_Fel_8d8e493b-566b-4143-bba4-9b833b1ecb66.png?ex=662ba9c7&is=661934c7&hm=947fca0ef3a75b08c4cdffd079eec96f0d98648de857ba511a8aebd6899f6518&"
+    url = encodeURI("https://cdn.discordapp.com/attachments/1222529795347185760/1228328031114760222/gd_superagi_98661_A_vibrant_and_inviting_logo_that_captures_the_f871ca90-7190-4aca-ae62-dd36aa2a5e84.png?ex=662ba49f&is=66192f9f&hm=1f28f83c30951597489a913ed862313534bd79781be06a35ed890ab736660117&");
     // load image
     fabric.Image.fromURL(url, function (img) {
         img.scaleToWidth(1024)
         img.scaleToHeight(1024)
+
+        img.set({
+            crossOrigin: 'anonymous', // Ensure cross-origin attribute is set
+            selectable: false // Ensure the image is not selectable
+        });
 
         // Create text elements dynamically
         const textElements = jsonData.Text_component_details_LIST.map(detail => {
@@ -49,9 +56,18 @@ async function createCanvas() {
         console.log(json);
 
         // Save SVG
-        const svg = canvas.toSVG();
+        // Save SVG
+        const svg = canvas.toSVG({
+            suppressPreamble: true, // Suppress XML preamble
+            viewBox: canvas.viewBox, // Use the canvas viewBox
+            includeDefinitions: true, // Include any definitions needed (such as for images)
+            noStyles: true // Don't include styles in the SVG
+        });
         fs.writeFileSync('output.svg', svg);
         console.log('SVG saved successfully.');
+
+        // Open the SVG file
+        // open('output.svg');
     });
 
     // Set the size of the canvas
